@@ -1,0 +1,133 @@
+.designer-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.designer-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.avatar-area {
+  position: relative;
+  width: 300px; /* Adjust as needed */
+  height: 400px; /* Adjust as needed */
+}
+
+.avatar-display {
+  width: 100%;
+  height: auto;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  background-color: #f0f0f0;
+}
+
+.shirt-display {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 2px dashed #000; /* Optional: for visibility */
+  border-radius: 10px;
+}
+
+.front {
+  z-index: 2; /* Ensure front shirt is on top */
+}
+
+.back {
+  z-index: 1; /* Ensure back shirt is beneath the front shirt */
+}
+
+.control-panel {
+  display: flex;
+  gap: 30px;
+  /* border: 1px dotted red; */
+  width: 700px;
+  margin-left: 20px; /* Space between avatar and control panel */
+}
+.designer-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.designer-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.avatar-area {
+  position: relative;
+  width: 300px;
+  height: 400px;
+}
+
+.avatar-display {
+  width: 100%;
+  height: auto;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  background-color: #f0f0f0;
+}
+
+.shirt-display {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 10px;
+}
+
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 400px;
+  margin-left: 20px;
+}
+
+.pattern-carousel {
+  display: flex;
+  gap: 10px;
+}
+
+.designer-container {
+  display: flex;
+  gap: 20px;
+}
+
+.control-panel {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  /* border: 1px dotted red; */
+}
+
+.control-section,
+.pattern-section {
+  width: 48%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.pattern-carousel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+button:hover {
+  opacity: 0.8;
+}

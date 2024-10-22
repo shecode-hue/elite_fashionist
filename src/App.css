@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-blue: #E6F3FF;
+  --secondary-blue: #B8D8FF;
+  --primary-purple: #6B46C1;
+  --secondary-purple: #9F7AEA;
+  --accent-purple: #553C9A;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--primary-blue);
+}
+
+
+.home-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.avatar-selection {
+  background: white;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+.avatar-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.avatar {
+  width: 150px;
+  height: 300px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.avatar.selected {
+  border-color: var(--primary-purple);
+  transform: scale(1.05);
+}
+
+.clothing-selection {
+  background: white;
+  border-radius: 1rem;
+  padding: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 2px solid var(--secondary-blue);
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+select:focus {
+  border-color: var(--primary-purple);
+}
+
+.start-button {
+  background-color: var(--primary-purple);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.start-button:hover {
+  background-color: var(--accent-purple);
+}
+
+
+.controls-panel {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pattern-preview, .design-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 0.5rem;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pattern-preview.selected, .design-preview.selected {
+  border-color: var(--primary-purple);
+  transform: scale(1.05);
+}
+
+/* Preview modal styles */
+.preview-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .avatar-list {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+  
+  .avatar {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .controls-panel {
+    padding: 1rem;
+  }
+}
