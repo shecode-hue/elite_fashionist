@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import './DesignerPage.css';
+// import './DesignerPage.css';
 import Pattern1 from '../../src/assets/patterns/pattern1.jpg';
 import Pattern2 from '../../src/assets/patterns/pattern2.jpg';
 import Pattern3 from '../../src/assets/patterns/pattern3.jpg';
@@ -76,19 +76,35 @@ const patterns = [
   { id: 'pattern20', image: Pattern20 },
 ];
 
-function DesignerPage() {
-  const { state } = useLocation();
-  const { avatar, clothingType } = state || {};
-  const navigate = useNavigate();
+const ShirtDesigner = () => {
+  // State management
+  const [shirtColor, setShirtColor] = useState('#ffffff');
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [showBack, setShowBack] = useState(false);
+  const [selectedPattern, setSelectedPattern] = useState(null);
+  const [shirtDesignIndex, setShirtDesignIndex] = useState(0);
+  const [rotation, setRotation] = useState(0);
 
-  const [shirtColor, setShirtColor] = useState('#ffffff'); // Default shirt color
-  const [shirtWidth, setShirtWidth] = useState(100); // Default shirt width in pixels
-  const [shirtHeight, setShirtHeight] = useState(100); // Default shirt height in pixels
-  const [shirtDesign, setShirtDesign] = useState(''); // For shirt design
-  const [showBack, setShowBack] = useState(false); // Toggle for showing the back of the shirt
-  const [position, setPosition] = useState({ x: 0, y: 0 }); // Position state
-  const [shirtDesignIndex, setShirtDesignIndex] = useState(0); // Track selected design in the array
-  const [selectedPattern, setSelectedPattern] = useState(''); // Track pattern selection
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { avatar, clothingType } = location.state || {};
+
+  // SVG paths for shirt shape
+  const shirtFrontPath = `
+    M 50 0
+    C 20 0, 0 20, 0 50
+    L 0 150
+    C 0 180, 20 200, 50 200
+    L 150 200
+    C 180 200, 200 180, 200 150
+    L 200 50
+    C 200 20, 180 0, 150 0
+    L 120 0
+    C 120 10, 110 20, 100 20
+    C 90 20, 80 10, 80 0
+    Z
+  `;
 
   if (!avatar) {
     return <p>No avatar selected. Please go back to the homepage.</p>;
@@ -109,6 +125,8 @@ function DesignerPage() {
         selectedPattern,
         showBack,
         position,
+        scale,
+        rotation,
       },
     });
   };
@@ -126,94 +144,167 @@ function DesignerPage() {
     setShirtColor(''); // Clear color when a pattern is selected
   };
 
+  const renderShirt = (isBack = false) => {
+    const baseWidth = 200;
+    const baseHeight = 200;
+    const scaledWidth = baseWidth * scale;
+    const scaledHeight = baseHeight * scale;
+    return (
+      <div
+        className={`shirt-container ${isBack ? 'back' : 'front'}`}
+        style={{
+          position: 'relative',
+          width: `${scaledWidth}px`,
+          height: `${scaledHeight}px`,
+          transform: `translate(${position.x}%, ${position.y}%) rotate(${rotation}deg)`,
+          transition: 'transform 0.3s ease',
+        }}
+      >
+        <svg
+          width={scaledWidth}
+          height={scaledHeight}
+          viewBox="0 0 200 200"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+          }}
+        >
+          <defs>
+            <pattern
+              id={`shirtPattern${isBack ? 'Back' : 'Front'}`}
+              patternUnits="userSpaceOnUse"
+              width="100%"
+              height="100%"
+            >
+              {selectedPattern ? (
+                <image
+                  href={selectedPattern.image}
+                  width="100%"
+                  height="100%"
+                  preserveAspectRatio="xMidYMid slice"
+                />
+              ) : (
+                <rect width="100%" height="100%" fill={shirtColor} />
+              )}
+            </pattern>
+          </defs>
+
+          <path
+            d={shirtFrontPath}
+            fill={`url(#shirtPattern${isBack ? 'Back' : 'Front'})`}
+            className="shirt-path"
+          />
+
+          <image
+            href={
+              isBack
+                ? designs[shirtDesignIndex].back
+                : designs[shirtDesignIndex].front
+            }
+            width="100%"
+            height="100%"
+            preserveAspectRatio="xMidYMid meet"
+            style={{ mixBlendMode: 'multiply' }}
+            className="design-overlay"
+          />
+        </svg>
+      </div>
+    );
+  };
+  const handleNextDesign = () => {
+    setShirtDesignIndex((prev) => (prev + 1) % designs.length);
+  };
+
+  const handlePreviousDesign = () => {
+    setShirtDesignIndex((prev) => (prev - 1 + designs.length) % designs.length);
+  };
+
   return (
     <div className="designer-page">
-      <h2>Design Your {clothingType}</h2>
-      <div className="designer-container">
-        <div className="avatar-area">
-          <img src={avatar} alt="Selected Avatar" className="avatar-display" />
+      <h2>Design Your {clothingType || 'Shirt'}</h2>
 
-          <div
-            className="shirt-display front"
-            style={{
-              backgroundColor: selectedPattern ? '' : shirtColor,
-              backgroundImage: selectedPattern
-                ? `url(${selectedPattern.image})`
-                : 'none',
-              width: '200px',
-              height: '300px',
-              transform: `translate(${position.x}%, ${position.y}%)`,
-            }}
-          >
-            <img
-              src={designs[shirtDesignIndex].front}
-              alt="Shirt Design Front"
-            />
-          </div>
-          {showBack && (
-            <div
-              className="shirt-display back"
-              style={{
-                width: '200px',
-                height: '300px',
-                transform: `translate(${position.x}%, ${position.y}%)`,
-              }}
-            >
-              <img
-                src={designs[shirtDesignIndex].back}
-                alt="Shirt Design Back"
-              />
-            </div>
+      <div className="designer-container">
+        <div className="preview-area">
+          {avatar && (
+            <img src={avatar} alt="Avatar" className="avatar-preview" />
           )}
+          {renderShirt(false)}
+          {showBack && renderShirt(true)}
         </div>
 
-        <div className="control-panel">
-          <div className="control-section">
-            <h3>Control Panel</h3>
-            <div>
-              <label>Shirt Color:</label>
+        <div className="controls-container">
+          <div className="controls">
+            <div className="control-group">
+              <label>Size:</label>
+              <input
+                type="range"
+                min="0.5"
+                max="2"
+                step="0.1"
+                value={scale}
+                onChange={(e) => setScale(parseFloat(e.target.value))}
+              />
+            </div>
+
+            <div className="control-group">
+              <label>Position X:</label>
+              <input
+                type="range"
+                min="-50"
+                max="50"
+                value={position.x}
+                onChange={(e) =>
+                  setPosition((prev) => ({
+                    ...prev,
+                    x: parseInt(e.target.value),
+                  }))
+                }
+              />
+            </div>
+
+            <div className="control-group">
+              <label>Position Y:</label>
+              <input
+                type="range"
+                min="-50"
+                max="50"
+                value={position.y}
+                onChange={(e) =>
+                  setPosition((prev) => ({
+                    ...prev,
+                    y: parseInt(e.target.value),
+                  }))
+                }
+              />
+            </div>
+
+            <div className="control-group">
+              <label>Rotation:</label>
+              <input
+                type="range"
+                min="-180"
+                max="180"
+                value={rotation}
+                onChange={(e) => setRotation(parseInt(e.target.value))}
+              />
+            </div>
+
+            <div className="control-group">
+              <label>Color:</label>
               <input
                 type="color"
                 value={shirtColor}
                 onChange={(e) => {
                   setShirtColor(e.target.value);
-                  setSelectedPattern('');
+                  setSelectedPattern(null);
                 }}
                 disabled={!!selectedPattern}
               />
             </div>
 
-            <button onClick={() => handleDesignChange('prev')}>
-              Previous Design
-            </button>
-            <button onClick={() => handleDesignChange('next')}>
-              Next Design
-            </button>
-
-            <div>
-              <label>Width:</label>
-              <input
-                type="range"
-                min="50"
-                max="300"
-                value={shirtWidth}
-                onChange={(e) => setShirtWidth(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label>Height:</label>
-              <input
-                type="range"
-                min="50"
-                max="300"
-                value={shirtHeight}
-                onChange={(e) => setShirtHeight(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label>Show Back of Shirt:</label>
+            <div className="control-group">
+              <label>Show Back:</label>
               <input
                 type="checkbox"
                 checked={showBack}
@@ -221,60 +312,39 @@ function DesignerPage() {
               />
             </div>
 
-            <div>
-              <label>Position (X):</label>
-              <input
-                type="range"
-                min="0"
-                max="190"
-                value={position.x}
-                onChange={(e) => handlePositionChange(e, 'x')}
-              />
-            </div>
-
-            <div>
-              <label>Position (Y):</label>
-              <input
-                type="range"
-                min="0"
-                max="500"
-                value={position.y}
-                onChange={(e) => handlePositionChange(e, 'y')}
-              />
-            </div>
-
-            <div>
-              <label>Shirt Design:</label>
-              <select onChange={(e) => setShirtDesign(e.target.value)}>
-                <option value="">Select Design</option>
-                <option value="design1">Design 1</option>
-                <option value="design2">Design 2</option>
-              </select>
+            <div className="design-navigation">
+              <button onClick={handlePreviousDesign}>Previous Design</button>
+              <button onClick={handleNextDesign}>Next Design</button>
             </div>
           </div>
 
           <div className="pattern-section">
-            <h4>Select Pattern:</h4>
-            <div className="pattern-carousel">
+            <h3>Select Pattern</h3>
+            <div className="pattern-grid">
               {patterns.map((pattern) => (
                 <button
                   key={pattern.id}
-                  onClick={() => handlePatternSelect(pattern)}
+                  className={`pattern-button ${
+                    selectedPattern?.id === pattern.id ? 'selected' : ''
+                  }`}
+                  onClick={() => {
+                    setSelectedPattern(pattern);
+                    setShirtColor('#ffffff');
+                  }}
                   style={{
                     backgroundImage: `url(${pattern.image})`,
-                    width: '100px',
-                    height: '100px',
-                    backgroundSize: 'cover',
                   }}
-                ></button>
+                />
               ))}
             </div>
-            <button onClick={handlePreview}>See Preview</button>
           </div>
+
+          <button className="preview-button" onClick={handlePreview}>
+            See Preview
+          </button>
         </div>
       </div>
     </div>
   );
-}
-
-export default DesignerPage;
+};
+export default ShirtDesigner;
