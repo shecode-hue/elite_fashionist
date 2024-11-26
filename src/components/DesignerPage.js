@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-// import './DesignerPage.css';
 import Pattern1 from '../../src/assets/patterns/pattern1.jpg';
 import Pattern2 from '../../src/assets/patterns/pattern2.jpg';
 import Pattern3 from '../../src/assets/patterns/pattern3.jpg';
@@ -21,20 +20,34 @@ import Pattern17 from '../../src/assets/patterns/pattern17.jpg';
 import Pattern18 from '../../src/assets/patterns/pattern18.jpg';
 import Pattern19 from '../../src/assets/patterns/pattern19.jpg';
 import Pattern20 from '../../src/assets/patterns/pattern20.jpg';
-import Design1 from '../../src/assets/designs/design1.png';
+import Design from '../../src/assets/designs/Top.png';
+import Design1 from '../../src/assets/designs/hoodie.png';
 import Design2 from '../../src/assets/designs/design2.png';
 import Design3 from '../../src/assets/designs/design3.png';
 import Design4 from '../../src/assets/designs/design4.png';
-import Design1b from '../../src/assets/designs/design1back.png';
+import Design5 from '../../src/assets/designs/design1.png';
+import Designb from '../../src/assets/designs/Top_b.png';
+import Design1b from '../../src/assets/designs/hoodie_b.png';
 import Design2b from '../../src/assets/designs/design2back.png';
 import Design3b from '../../src/assets/designs/design3back.png';
 import Design4b from '../../src/assets/designs/design4back.png';
+import Design5b from '../../src/assets/designs/design1back.png';
 
 const designs = [
+  {
+    id: 'design',
+    front: Design,
+    back: Designb,
+  },
   {
     id: 'design1',
     front: Design1,
     back: Design1b,
+  },
+  {
+    id: 'design5',
+    front: Design5,
+    back: Design5b,
   },
   {
     id: 'design2',
@@ -89,31 +102,15 @@ const ShirtDesigner = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { avatar, clothingType } = location.state || {};
-
-  // SVG paths for shirt shape
-  const shirtFrontPath = `
-    M 50 0
-    C 20 0, 0 20, 0 50
-    L 0 150
-    C 0 180, 20 200, 50 200
-    L 150 200
-    C 180 200, 200 180, 200 150
-    L 200 50
-    C 200 20, 180 0, 150 0
-    L 120 0
-    C 120 10, 110 20, 100 20
-    C 90 20, 80 10, 80 0
-    Z
-  `;
-
+  const [bodyMeasurements, setBodyMeasurements] = useState({
+    height: 170, // in cm
+    waistCircumference: 85, // in cm
+    armLength: 60, // in cm
+    neckCircumference: 40, // in cm
+  });
   if (!avatar) {
     return <p>No avatar selected. Please go back to the homepage.</p>;
   }
-
-  const handlePositionChange = (e, axis) => {
-    const value = e.target.value;
-    setPosition((prev) => ({ ...prev, [axis]: value }));
-  };
 
   const handlePreview = () => {
     navigate('/preview', {
@@ -127,21 +124,9 @@ const ShirtDesigner = () => {
         position,
         scale,
         rotation,
+        bodyMeasurements,
       },
     });
-  };
-
-  const handleDesignChange = (direction) => {
-    setShirtDesignIndex((prevIndex) =>
-      direction === 'next'
-        ? (prevIndex + 1) % designs.length
-        : (prevIndex - 1 + designs.length) % designs.length
-    );
-  };
-
-  const handlePatternSelect = (pattern) => {
-    setSelectedPattern(pattern);
-    setShirtColor(''); // Clear color when a pattern is selected
   };
 
   const renderShirt = (isBack = false) => {
@@ -149,6 +134,11 @@ const ShirtDesigner = () => {
     const baseHeight = 200;
     const scaledWidth = baseWidth * scale;
     const scaledHeight = baseHeight * scale;
+
+    const currentDesign = isBack
+      ? designs[shirtDesignIndex].back
+      : designs[shirtDesignIndex].front;
+
     return (
       <div
         className={`shirt-container ${isBack ? 'back' : 'front'}`}
@@ -171,42 +161,58 @@ const ShirtDesigner = () => {
           }}
         >
           <defs>
+            {/* Mask based on the design SVG */}
+            <mask id={`shirtMask${isBack ? 'Back' : 'Front'}`}>
+              <image
+                href={currentDesign}
+                width="200"
+                height="200"
+                preserveAspectRatio="xMidYMid slice"
+                x="0"
+                y="0"
+                style={{ filter: 'invert(1)' }}
+              />
+            </mask>
+
+            {/* Pattern definition */}
             <pattern
               id={`shirtPattern${isBack ? 'Back' : 'Front'}`}
               patternUnits="userSpaceOnUse"
-              width="100%"
-              height="100%"
+              width="200"
+              height="200"
+              x="0"
+              y="0"
             >
               {selectedPattern ? (
                 <image
                   href={selectedPattern.image}
-                  width="100%"
-                  height="100%"
+                  width="200"
+                  height="200"
                   preserveAspectRatio="xMidYMid slice"
                 />
               ) : (
-                <rect width="100%" height="100%" fill={shirtColor} />
+                <rect width="200" height="200" fill={shirtColor} />
               )}
             </pattern>
           </defs>
 
-          <path
-            d={shirtFrontPath}
+          {/* Pattern-filled base */}
+          <rect
+            x="0"
+            y="0"
+            width="200"
+            height="200"
             fill={`url(#shirtPattern${isBack ? 'Back' : 'Front'})`}
-            className="shirt-path"
+            mask={`url(#shirtMask${isBack ? 'Back' : 'Front'})`}
           />
 
+          {/* Design overlay */}
           <image
-            href={
-              isBack
-                ? designs[shirtDesignIndex].back
-                : designs[shirtDesignIndex].front
-            }
-            width="100%"
-            height="100%"
-            preserveAspectRatio="xMidYMid meet"
+            href={currentDesign}
+            width="200"
+            height="200"
+            preserveAspectRatio="xMidYMid slice"
             style={{ mixBlendMode: 'multiply' }}
-            className="design-overlay"
           />
         </svg>
       </div>
@@ -251,8 +257,8 @@ const ShirtDesigner = () => {
               <label>Position X:</label>
               <input
                 type="range"
-                min="-50"
-                max="50"
+                min="-150"
+                max="0"
                 value={position.x}
                 onChange={(e) =>
                   setPosition((prev) => ({
@@ -338,7 +344,38 @@ const ShirtDesigner = () => {
               ))}
             </div>
           </div>
-
+          <div className="body-measurements-section">
+            <h3>Body Measurements</h3>
+            <div className="measurements-grid">
+              {Object.entries(bodyMeasurements).map(([key, value]) => (
+                <div key={key} className="measurement-input">
+                  <label>
+                    {key
+                      .replace(/([A-Z])/g, ' $1')
+                      .replace(/^./, (char) => char.toUpperCase())}
+                    :
+                  </label>
+                  <div className="input-group">
+                    <input
+                      type="number"
+                      value={value}
+                      onChange={(e) =>
+                        setBodyMeasurements((prev) => ({
+                          ...prev,
+                          [key]: parseFloat(e.target.value),
+                        }))
+                      }
+                    />
+                    <span>
+                      {key.includes('Circumference') || key === 'height'
+                        ? 'cm'
+                        : 'cm'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
           <button className="preview-button" onClick={handlePreview}>
             See Preview
           </button>

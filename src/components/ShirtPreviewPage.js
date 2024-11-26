@@ -27,29 +27,50 @@ function ShirtPreviewPage() {
     position,
     scale,
     rotation,
+    bodyMeasurements,
   } = state;
+
+  const renderBodyMeasurementDetails = () => {
+    if (!bodyMeasurements) return null;
+
+    return (
+      <div className="body-measurements-details">
+        <h3>Body Measurements</h3>
+        <div className="measurements-grid">
+          {Object.entries(bodyMeasurements).map(([key, value]) => (
+            <div key={key} className="measurement-item">
+              <strong>
+                {key
+                  .replace(/([A-Z])/g, ' $1')
+                  .replace(/^./, (char) => char.toUpperCase())}
+                :
+              </strong>
+              <span>{value} cm</span>
+            </div>
+          ))}
+        </div>
+        <div className="size-recommendation">
+          {/* Basic size recommendation logic */}
+          {calculateSizeRecommendation(bodyMeasurements)}
+        </div>
+      </div>
+    );
+  };
+
+  const calculateSizeRecommendation = (measurements) => {
+    const { chestCircumference, height } = measurements;
+
+    if (chestCircumference < 85) return 'Small Size Recommended';
+    if (chestCircumference < 95) return 'Medium Size Recommended';
+    if (chestCircumference < 105) return 'Large Size Recommended';
+    return 'Extra Large Size Recommended';
+  };
 
   const renderShirt = (isBack = false) => {
     const baseWidth = 200;
     const baseHeight = 200;
     const scaledWidth = baseWidth * (scale || 1);
     const scaledHeight = baseHeight * (scale || 1);
-
-    // SVG path for shirt shape
-    const shirtPath = `
-      M 50 0
-      C 20 0, 0 20, 0 50
-      L 0 150
-      C 0 180, 20 200, 50 200
-      L 150 200
-      C 180 200, 200 180, 200 150
-      L 200 50
-      C 200 20, 180 0, 150 0
-      L 120 0
-      C 120 10, 110 20, 100 20
-      C 90 20, 80 10, 80 0
-      Z
-    `;
 
     return (
       <div
@@ -75,45 +96,59 @@ function ShirtPreviewPage() {
           }}
         >
           <defs>
+            {/* Mask based on the design SVG */}
+            <mask id={`previewMask${isBack ? 'Back' : 'Front'}`}>
+              <image
+                href={isBack ? design.back : design.front}
+                width="200"
+                height="200"
+                preserveAspectRatio="xMidYMid slice"
+                x="0"
+                y="0"
+                style={{ filter: 'invert(1)' }}
+              />
+            </mask>
+
+            {/* Pattern definition */}
             <pattern
               id={`previewPattern${isBack ? 'Back' : 'Front'}`}
               patternUnits="userSpaceOnUse"
-              width="100%"
-              height="100%"
+              width="200"
+              height="200"
+              x="0"
+              y="0"
             >
               {selectedPattern ? (
                 <image
                   href={selectedPattern.image}
-                  width="100%"
-                  height="100%"
+                  width="200"
+                  height="200"
                   preserveAspectRatio="xMidYMid slice"
                 />
               ) : (
-                <rect
-                  width="100%"
-                  height="100%"
-                  fill={shirtColor || '#ffffff'}
-                />
+                <rect width="200" height="200" fill={shirtColor || '#ffffff'} />
               )}
             </pattern>
           </defs>
 
-          <path
-            d={shirtPath}
+          {/* Pattern-filled base */}
+          <rect
+            x="0"
+            y="0"
+            width="200"
+            height="200"
             fill={`url(#previewPattern${isBack ? 'Back' : 'Front'})`}
-            className="preview-shirt-path"
+            mask={`url(#previewMask${isBack ? 'Back' : 'Front'})`}
           />
 
-          {design && (
-            <image
-              href={isBack ? design.back : design.front}
-              width="100%"
-              height="100%"
-              preserveAspectRatio="xMidYMid meet"
-              style={{ mixBlendMode: 'multiply' }}
-              className="preview-design-overlay"
-            />
-          )}
+          {/* Design overlay */}
+          <image
+            href={isBack ? design.back : design.front}
+            width="200"
+            height="200"
+            preserveAspectRatio="xMidYMid slice"
+            style={{ mixBlendMode: 'multiply' }}
+          />
         </svg>
       </div>
     );
@@ -158,8 +193,10 @@ function ShirtPreviewPage() {
             </li>
             <li>Rotation: {rotation || 0}°</li>
           </ul>
+          {renderBodyMeasurementDetails()}
         </div>
 
+        {/* Rest of the existing styles and actions */}
         <div className="preview-actions">
           <button onClick={() => navigate(-1)} className="back-button">
             Back to Designer
@@ -277,6 +314,35 @@ function ShirtPreviewPage() {
               background: none;
               padding: 0;
             }
+          }
+           .measurements-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+          }
+
+          .measurement-item, .measurement-input {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .input-group {
+            display: flex;
+            align-items: center;
+          }
+
+          .input-group input {
+            width: 70px;
+            margin-right: 5px;
+          }
+
+          .size-recommendation {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            text-align: center;
           }
         `}
       </style>
