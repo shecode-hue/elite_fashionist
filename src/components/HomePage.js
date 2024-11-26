@@ -3,11 +3,10 @@ import { useNavigate } from 'react-router-dom';
 
 const avatars = [
   `${process.env.PUBLIC_URL}/avatars/avatar2.png`,
-  `${process.env.PUBLIC_URL}/avatars/avatar3.png`,
+  `${process.env.PUBLIC_URL}/avatars/avatar1.png`,
   `${process.env.PUBLIC_URL}/avatars/avatar4.png`,
   `${process.env.PUBLIC_URL}/avatars/avatar5.png`,
   `${process.env.PUBLIC_URL}/avatars/avatar6.png`,
-  
 ];
 
 const clothingTypes = ['Shirt', 'Blouse', 'Vest'];

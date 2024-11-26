@@ -245,7 +245,7 @@ const ShirtDesigner = () => {
               <label>Size:</label>
               <input
                 type="range"
-                min="0.5"
+                min="0.3"
                 max="2"
                 step="0.1"
                 value={scale}
@@ -257,7 +257,7 @@ const ShirtDesigner = () => {
               <label>Position X:</label>
               <input
                 type="range"
-                min="-150"
+                min="-250"
                 max="0"
                 value={position.x}
                 onChange={(e) =>
@@ -273,8 +273,8 @@ const ShirtDesigner = () => {
               <label>Position Y:</label>
               <input
                 type="range"
-                min="-50"
-                max="50"
+                min="-150"
+                max="0"
                 value={position.y}
                 onChange={(e) =>
                   setPosition((prev) => ({
