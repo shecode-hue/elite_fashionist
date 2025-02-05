@@ -9,11 +9,11 @@ const avatars = [
   `${process.env.PUBLIC_URL}/avatars/avatar6.png`,
 ];
 
-const clothingTypes = ['Shirt', 'Blouse', 'Vest'];
+const clothingTypes = ['All', 'Dress', 'Shirt'];
 
 function HomePage() {
   const [selectedAvatar, setSelectedAvatar] = useState(null);
-  const [selectedClothing, setSelectedClothing] = useState('Shirt');
+  const [selectedClothing, setSelectedClothing] = useState('All');
   const navigate = useNavigate();
 
   const handleAvatarSelect = (avatar) => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Pattern1 from '../../src/assets/patterns/pattern1.jpg';
+import Pattern1 from '../../src/assets/patterns/material1.jpg';
 import Pattern2 from '../../src/assets/patterns/pattern2.jpg';
 import Pattern3 from '../../src/assets/patterns/pattern3.jpg';
 import Pattern4 from '../../src/assets/patterns/pattern4.jpg';
@@ -21,28 +21,29 @@ import Pattern18 from '../../src/assets/patterns/pattern18.jpg';
 import Pattern19 from '../../src/assets/patterns/pattern19.jpg';
 import Pattern20 from '../../src/assets/patterns/pattern20.jpg';
 import Design from '../../src/assets/designs/Top.png';
-import Design1 from '../../src/assets/designs/hoodie.png';
-import Design2 from '../../src/assets/designs/design2.png';
-import Design3 from '../../src/assets/designs/design3.png';
-import Design4 from '../../src/assets/designs/design4.png';
+import Design1 from '../../src/assets/designs/dress1.png';
+import Design2 from '../../src/assets/designs/dress3.png';
+import Design3 from '../../src/assets/designs/dress4.png';
+import Design4 from '../../src/assets/designs/dress5.png';
 import Design5 from '../../src/assets/designs/design1.png';
 import Designb from '../../src/assets/designs/Top_b.png';
-import Design1b from '../../src/assets/designs/hoodie_b.png';
-import Design2b from '../../src/assets/designs/design2back.png';
-import Design3b from '../../src/assets/designs/design3back.png';
-import Design4b from '../../src/assets/designs/design4back.png';
+import Design1b from '../../src/assets/designs//dress1.png';
+import Design2b from '../../src/assets/designs/dress3.png';
+import Design3b from '../../src/assets/designs/dress4.png';
+import Design4b from '../../src/assets/designs/dress5.png';
 import Design5b from '../../src/assets/designs/design1back.png';
 
 const designs = [
-  {
-    id: 'design',
-    front: Design,
-    back: Designb,
-  },
+ 
   {
     id: 'design1',
     front: Design1,
     back: Design1b,
+  },
+  {
+    id: 'design',
+    front: Design,
+    back: Designb,
   },
   {
     id: 'design5',
